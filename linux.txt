@@ -96,7 +96,142 @@ MEMORY MANAGEMENT :-
 
 2) Find out the number of process is in run queue and blocking queue
 	ubuntu@ip-172-31-81-215:~$ ubuntu@ip-172-31-81-215:~$ vmstat 1
+
+
+
+DISK PARTITION, FILE SYSTEM CREATION, MANAGEMENT AND MOUNTING :-
+
+	attach 20 GB EBS volume
+
+a) Create 2 primary partitions of 3 GB each
+	ubuntu@ip-172-31-81-215:~$ sudo su -
+	root@ip-172-31-81-215:~# lsblk
+	root@ip-172-31-81-215:~# fdisk /dev/xvdf
+
+	Command (m for help): n
+	Partition type
+   	p   primary (0 primary, 0 extended, 4 free)
+   	e   extended (container for logical partitions)
+	Select (default p): p
+	Partition number (1-4, default 1):
+	First sector (2048-41943039, default 2048):
+	Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-41943039, default 41943039): +3G
+	Command (m for help): n
+	Select (default p): p
+	Partition number (2-4, default 2):
+	First sector (4196352-41943039, default 4196352):
+	Last sector, +/-sectors or +/-size{K,M,G,T,P} (4196352-41943039, default 41943039): +3G
+	Command (m for help): w
+	The partition table has been altered.
+
+b) Create 2 logical partitions of 6 GB each
+	Command (m for help): n
+	Partition type
+   	p   primary (2 primary, 0 extended, 2 free)
+   	e   extended (container for logical partitions)
+	Select (default p): e
+	Partition number (3,4, default 3):
+	First sector (12584960-41943039, default 12584960):
+	Last sector, +/-sectors or +/-size{K,M,G,T,P} (12584960-41943039, default 41943039): +13G
+
+	Created a new partition 3 of type 'Extended' and of size 13 GiB.
+
+	Command (m for help): n
+	Partition type
+   	p   primary (2 primary, 1 extended, 1 free)
+   	l   logical (numbered from 5)
+	Select (default p): l
+
+	Adding logical partition 5
+	First sector (12587008-37750783, default 12587008):
+	Last sector, +/-sectors or +/-size{K,M,G,T,P} (12587008-37750783, default 37750783): +6G
+
+	Created a new partition 5 of type 'Linux' and of size 6 GiB.
+
+	Command (m for help): n
+	Partition type
+   	p   primary (2 primary, 1 extended, 1 free)
+   	l   logical (numbered from 5)
+	Select (default p): l
+
+	Adding logical partition 6
+	First sector (25171968-37750783, default 25171968):
+	Last sector, +/-sectors or +/-size{K,M,G,T,P} (25171968-37750783, default 37750783): +6G
+
+	Created a new partition 6 of type 'Linux' and of size 6 GiB.
+
+	Command (m for help): w
+	The partition table has been altered.
+	Calling ioctl() to re-read partition table.
+	Syncing disks.
+
+c)  Format all 4 partitions and create ext4 filesystem on that
+	root@ip-172-31-81-215:~# sudo mkfs -t ext4 /dev/xvdf
+	root@ip-172-31-81-215:~# lsblk
+
+d) Create 4 folders inside root ( / ) folder name it as Data1, Data2, Data3, Data4
+	root@ip-172-31-81-215:~# cd /
+	root@ip-172-31-81-215:/# mkdir Data1
+	root@ip-172-31-81-215:/# mkdir Data2
+	root@ip-172-31-81-215:/# mkdir Data3
+	root@ip-172-31-81-215:/# mkdir Data4
+
+e) Mount all formated partitions on the respective folders
+	root@ip-172-31-81-215:/# mount /dev/xvdf1 /Data1
+	root@ip-172-31-81-215:/# mount /dev/xvdf2 /Data2
+	root@ip-172-31-81-215:/# mount /dev/xvdf3 /Data3
+	root@ip-172-31-81-215:/# mount /dev/xvdf4 /Data4
+
+f)  Create empty file inside each folders of size 2 GB, 2GB, 4 GB and 4 GB respectively  using  command -  dd - "convert and copy a file"
+
+	root@ip-172-31-81-215:/Data1# dd if=/dev/zero of=empty1.txt bs=1024 count=2028k
+	2076672+0 records in
+	2076672+0 records out
+	2126512128 bytes (2.1 GB, 2.0 GiB) copied, 30.4187 s, 69.9 MB/s
+
+	root@ip-172-31-81-215:/# cd Data2
+	root@ip-172-31-81-215:/Data2# dd if=/dev/zero of=empty2.txt bs=1024 count=2028k
+	2076672+0 records in
+	2076672+0 records out
+	2126512128 bytes (2.1 GB, 2.0 GiB) copied, 30.6229 s, 69.4 MB/s
+
+	root@ip-172-31-81-215:/# cd Data3
+	root@ip-172-31-81-215:/Data3# dd if=/dev/zero of=empty2.txt bs=1024 count=4096k
+	4194304+0 records in
+	4194304+0 records out
+	4294967296 bytes (4.3 GB, 4.0 GiB) copied, 66.2602 s, 64.8 MB/s
+
+	root@ip-172-31-81-215:/# cd Data4
+	root@ip-172-31-81-215:/Data4# dd if=/dev/zero of=empty2.txt bs=1024 count=4096k
+	4194304+0 records in
+	4194304+0 records out
+	4294967296 bytes (4.3 GB, 4.0 GiB) copied, 66.4694 s, 64.6 MB/s
+
+g) Go inside /Data1  and run  command -  while(true); do sleep 5s; done  , do ctrl-z
+	root@ip-172-31-81-215:/# cd Data1
+	root@ip-172-31-81-215:/Data1# while(true); do sleep 5s; done
+	^Z
+	[1]+  Stopped                 sleep 5s
+
+h) Check disk utilization of each mount point
+	root@ip-172-31-81-215:/Data1# df
+	root@ip-172-31-81-215:/Data2# df
+	root@ip-172-31-81-215:/Data3# df
+	root@ip-172-31-81-215:/Data4# df
+
+i)  Unmount all partitions /Data1, /Data2, /Data3 and /Data4
+	root@ip-172-31-81-215:/# umount data1
+	root@ip-172-31-81-215:/# umount data2
+	root@ip-172-31-81-215:/# umount data3
+	root@ip-172-31-81-215:/# umount data4
 	
+	
+
+	
+	
+	
+
+
 
 
 	
