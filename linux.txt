@@ -1,0 +1,104 @@
+FILE SYSTEM MANAGEMENT :-
+
+
+1)  List out 5 files in your system which consuming most of the disk space
+	du . | sort -nr | head -n5  (Descending order)
+	du . | sort -n | head -n5   (Ascending order)
+	du -sh * | sort -nr | head -n5   (Descending in human readable format)
+	du -sh * | sort -n | head -n5    (Ascending in human readable format)
+
+2) Create one common folder in such way that anyone can create files inside that independently and should not be able to delete other users files from that common folder.
+	chmod 777 bridgelabz    (others can only read and execute)
+
+
+3) Create user name "shubham" and add that user in the group "adm"
+      a) Create folder /data , change owner and group as  "root:adm
+      b) Change /data permission such a way that user can able to write data in this folder and ownership of files or folder which you creates in this folder should be same as parent folder i.e /data folder permission (root:adm)
+
+</>#
+..      root  adm   /data
+
+</data>#
+rw_rw_r  root  adm test.txt
+
+
+	sudo useradd shubham
+	sudo useradd -g adm shubham
+	id shubham
+	
+	ubuntu@ip-172-31-81-215:~$ sudo -i    (into root user)
+	root@ip-172-31-81-215:~# mkdir /data  (created dir)
+	root@ip-172-31-81-215:~# ll
+
+	root@ip-172-31-81-215:~# cd /data  (change dir to /data)
+	root@ip-172-31-81-215:/data#
+
+	root@ip-172-31-81-215:/data# cd /
+	root@ip-172-31-81-215:/# ls
+
+	root@ip-172-31-81-215:/# chown root:adm data/    (ownership to root:adm)
+	root@ip-172-31-81-215:/# chmod 664 data/    (file permission)
+
+	root@ip-172-31-81-215:/# ll data/
+
+	root@ip-172-31-81-215:/# cd data/
+	root@ip-172-31-81-215:/data# touch test.txt
+
+	root@ip-172-31-81-215:/data# ll
+
+	root@ip-172-31-81-215:/data# chmod -R 664 test.txt
+	root@ip-172-31-81-215:/data# ll
+
+	root@ip-172-31-81-215:/data# chown root:adm test.txt
+	root@ip-172-31-81-215:/data# ll
+
+
+PROCESS MANAGEMENT :-
+
+1)  List out highest priority process in the system
+	
+	ubuntu@ip-172-31-81-215:~$ ps -eo pid,ppid,cmd,%mem,%cpu,nice --sort=-nice | tail
+	OR
+	ubuntu@ip-172-31-81-215:~$ ps -o pri (not getting )
+
+USER MANAGEMENT :-
+
+1)  Create user "nikhil" with home directory set as "/home/nikhil"
+       a) nikhil user should have "/bin/sh" shell for his environment
+       b) His password should expire in 9 days and 2 days before password expiry, he should get warning. User account must expire in 1 month from creation date
+       c) Give him root privileges to start/stop cron daemon.
+
+	ubuntu@ip-172-31-81-215:~$ sudo useradd nikhil -m -s /bin/bash  (created user with home directory and default sheel /bib/bash)
+	ubuntu@ip-172-31-81-215:/$ sudo chage -l nikhil       (List the password and its related details for an user)
+	ubuntu@ip-172-31-81-215:~$ sudo chage -M 9 nikhil     (password expire in maximum 9 days)
+	ubuntu@ip-172-31-81-215:~$ sudo chage -W 2 nikhil     (password change warning before 2 days)
+	ubuntu@ip-172-31-81-215:~$ sudo chage -E 2022-03-23 nikhil   (user accout expire in one month [23 feb to 23 march])
+	
+
+
+
+2) Inside folder "/" , create new home directory as "nikhil" (/nikhil) and setup this folder as a home directory for user "nikhil"
+
+
+
+MEMORY MANAGEMENT :-
+
+1) Setup additional swap space in the system to solve low memory issue.  The swap which you added should be available post reboot.
+
+	ubuntu@ip-172-31-81-215:/$ sudo -i	(into root user)
+	root@ip-172-31-81-215:/# mkdir dir	(created directory)
+	root@ip-172-31-81-215:/# cd dir		(into directory)
+	root@ip-172-31-81-215:/#touch myswapfile	(file in directory)
+	root@ip-172-31-81-215:/# dd if=/dev/zero of=/dir/myswapfile bs=1024 count=100		(directory/file   bs 1024byte memory block created  count=100 bytes)
+	root@ip-172-31-81-215:/# ll /dir/myswapfile
+	root@ip-172-31-81-215:/# mkswap /dir/myswapfile
+	root@ip-172-31-81-215:/# swapon -s
+
+2) Find out the number of process is in run queue and blocking queue
+	ubuntu@ip-172-31-81-215:~$ ubuntu@ip-172-31-81-215:~$ vmstat 1
+	
+
+
+	
+	
+
