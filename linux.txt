@@ -60,6 +60,28 @@ PROCESS MANAGEMENT :-
 	ubuntu@ip-172-31-81-215:~$ ps -eo pid,ppid,cmd,%mem,%cpu,nice --sort=-nice | tail
 	OR
 	ubuntu@ip-172-31-81-215:~$ ps -o pri (not getting )
+	OR
+	ubuntu@ip-172-31-81-215:~$top
+2) Open terminal with 2 tabs or sessions
+    a)  run command "vmstat 1"
+    b) switch to another tab,  pause  running vmstat command for few seconds and resume it again
+
+use appropriate SIGNALS to do this activity.
+
+	OPEN 2 SESSION OF COMMAND PROMPT
+	ubuntu@ip-172-31-81-215:/$ sudo -i
+	root@ip-172-31-81-215:/# vamstat 1 (1st  session)
+	root@ip-172-31-81-215:/# vamstat 1 (2nd  session)
+	root@ip-172-31-81-215:/# kill  1985
+
+3)  Find the process which is sleeping in "wait" state. 
+	ubuntu@ip-172-31-81-215:~$ ps -l   (to see processes associated with the current shell)
+	F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+	0 S  1000    1176    1175  0  80   0 -  2514 do_wai pts/2    00:00:00 bash
+	0 R  1000    1218    1176  0  80   0 -  2636 -      pts/2    00:00:00 ps
+
+	 If a process is in Sleep state, the WCHAN field shows the system call that the process is waiting on.
+
 
 USER MANAGEMENT :-
 
